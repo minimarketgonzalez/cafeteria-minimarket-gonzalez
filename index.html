@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cafetería</title>
+
+<style>
+/* ===== ESTILO GENERAL DE LA APP ===== */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f6ff; 
+    margin: 0;
+    padding: 20px;
+    color: #1a3b5f;
+}
+
+/* Contenedor principal */
+.container {
+    max-width: 700px;
+    margin: auto;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0px 5px 20px rgba(0, 72, 150, 0.15);
+}
+
+/* Títulos de categorías */
+h2 {
+    margin-top: 40px;
+    color: #0a3d91;
+    border-left: 6px solid #0a3d91;
+    padding-left: 10px;
+    font-size: 22px;
+}
+
+/* Botones del menú */
+button {
+    width: 100%;
+    background-color: #0a73e8;
+    color: white;
+    border: none;
+    padding: 12px 15px;
+    margin: 10px 0;
+    font-size: 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+    text-align: left;
+    font-weight: bold;
+}
+
+/* Hover */
+button:hover {
+    background-color: #085ec2;
+}
+</style>
+
+<script>
+    function enviarWhatsApp(producto, precio) {
+        const numero = "+18494397969";
+        const mensaje = `Pedido: ${producto} - $${precio}`;
+        const url = "https://api.whatsapp.com/send?phone=" + numero + "&text=" + encodeURIComponent(mensaje);
+        window.location.href = url;
+    }
+    </script>
+
+</head>
+<body>
+
+<div class="container">
+
+<h1>📋 Menú de la Cafetería</h1>
+
+<!-- ================== TOSTADAS ================== -->
+<h2>Tostadas</h2>
+<button onclick="enviarWhatsApp('Tostada jamón y queso', 50)">Jamón y queso — $50</button>
+<button onclick="enviarWhatsApp('Tostada huevo, jamón y queso', 70)">Huevo, jamón y queso — $70</button>
+<button onclick="enviarWhatsApp('Tostada pollo y queso', 80)">Pollo y queso — $80</button>
+<button onclick="enviarWhatsApp('Tostada pollo, huevo y queso', 100)">Pollo, huevo y queso — $100</button>
+<button onclick="enviarWhatsApp('Tostada salami, queso y huevo', 100)">Salami, queso y huevo — $100</button>
+
+<!-- ================== SANDWICH ================== -->
+<h2>Sándwich</h2>
+<button onclick="enviarWhatsApp('Sándwich jamón y queso', 100)">Jamón y queso — $100</button>
+<button onclick="enviarWhatsApp('Sándwich pollo y queso', 125)">Pollo y queso — $125</button>
+<button onclick="enviarWhatsApp('Sándwich pollo y huevo', 150)">Pollo y huevo — $150</button>
+<button onclick="enviarWhatsApp('Sándwich pollo, huevo y queso', 175)">Pollo, huevo y queso — $175</button>
+<button onclick="enviarWhatsApp('Club sándwich + papa', 250)">Club sándwich + papa — $250</button>
+<button onclick="enviarWhatsApp('Club sándwich', 200)">Club sándwich — $200</button>
+<button onclick="enviarWhatsApp('Derretido de queso', 100)">Derretido de queso — $100</button>
+
+<!-- ================== BURRITOS ================== -->
+<h2>Burritos</h2>
+<button onclick="enviarWhatsApp('Burrito pollo, papa y queso', 125)">Pollo, papa y queso — $125</button>
+<button onclick="enviarWhatsApp('Burrito pollo, queso, cebolla y huevo', 150)">Pollo, queso, cebolla y huevo — $150</button>
+<button onclick="enviarWhatsApp('Burrito triple pollo y triple queso', 200)">Triple pollo y triple queso — $200</button>
+<button onclick="enviarWhatsApp('Quesadilla', 150)">Quesadilla — $150</button>
+
+<!-- ================== TORTILLAS ================== -->
+<h2>Tortillas</h2>
+<button onclick="enviarWhatsApp('Tortilla huevo, queso, pollo y tomate', 150)">Huevo, queso, pollo y tomate — $150</button>
+<button onclick="enviarWhatsApp('Tortilla huevo, pollo y queso', 125)">Huevo, pollo y queso — $125</button>
+<button onclick="enviarWhatsApp('Tortilla huevo, tuna y queso', 200)">Huevo, tuna y queso — $200</button>
+
+<!-- ================== FRITO ================== -->
+<h2>Frito / Tostones</h2>
+
+<button onclick="enviarWhatsApp('Frito salami', 100)">Salami — $100</button>
+<button onclick="enviarWhatsApp('Frito salami', 150)">Salami — $150</button>
+<button onclick="enviarWhatsApp('Frito salami', 200)">Salami — $200</button>
+<button onclick="enviarWhatsApp('Frito salami', 250)">Salami — $250</button>
+
+<button onclick="enviarWhatsApp('Frito chuleta', 150)">Chuleta — $150</button>
+<button onclick="enviarWhatsApp('Frito chuleta', 200)">Chuleta — $200</button>
+<button onclick="enviarWhatsApp('Frito chuleta', 250)">Chuleta — $250</button>
+<button onclick="enviarWhatsApp('Frito chuleta', 300)">Chuleta — $300</button>
+
+<button onclick="enviarWhatsApp('Frito longaniza', 100)">Longaniza — $100</button>
+<button onclick="enviarWhatsApp('Frito longaniza', 150)">Longaniza — $150</button>
+<button onclick="enviarWhatsApp('Frito longaniza', 200)">Longaniza — $200</button>
+<button onclick="enviarWhatsApp('Frito longaniza', 250)">Longaniza — $250</button>
+
+<button onclick="enviarWhatsApp('Frito salchicha', 100)">Salchicha — $100</button>
+<button onclick="enviarWhatsApp('Frito salchicha', 150)">Salchicha — $150</button>
+<button onclick="enviarWhatsApp('Frito salchicha', 200)">Salchicha — $200</button>
+
+<button onclick="enviarWhatsApp('Frito huevo', 100)">Huevo — $100</button>
+<button onclick="enviarWhatsApp('Frito huevo', 150)">Huevo — $150</button>
+<button onclick="enviarWhatsApp('Frito huevo', 200)">Huevo — $200</button>
+
+<button onclick="enviarWhatsApp('Frito queso', 100)">Queso — $100</button>
+<button onclick="enviarWhatsApp('Frito queso', 150)">Queso — $150</button>
+<button onclick="enviarWhatsApp('Frito queso', 200)">Queso — $200</button>
+
+<!-- ================== PAPAS ================== -->
+<h2>Papas fritas</h2>
+<button onclick="enviarWhatsApp('Salchipapa', 100)">Salchipapa — $100</button>
+<button onclick="enviarWhatsApp('Salchipapa', 150)">Salchipapa — $150</button>
+<button onclick="enviarWhatsApp('Salchipapa', 200)">Salchipapa — $200</button>
+<button onclick="enviarWhatsApp('Salchipapa', 250)">Salchipapa — $250</button>
+
+<button onclick="enviarWhatsApp('Yaroa', 200)">Yaroa — $200</button>
+<button onclick="enviarWhatsApp('Yaroa', 250)">Yaroa — $250</button>
+<button onclick="enviarWhatsApp('Yaroa', 300)">Yaroa — $300</button>
+
+<button onclick="enviarWhatsApp('Salchicha y pollo', 150)">Salchicha y pollo — $150</button>
+<button onclick="enviarWhatsApp('Salchicha y pollo', 200)">Salchicha y pollo — $200</button>
+<button onclick="enviarWhatsApp('Salchicha y pollo', 250)">Salchicha y pollo — $250</button>
+
+<button onclick="enviarWhatsApp('Chuleta', 150)">Chuleta — $150</button>
+<button onclick="enviarWhatsApp('Chuleta', 200)">Chuleta — $200</button>
+<button onclick="enviarWhatsApp('Chuleta', 250)">Chuleta — $250</button>
+
+<!-- ================== BATIDAS ================== -->
+<h2>Batidas</h2>
+<button onclick="enviarWhatsApp('Batida de fresa', 125)">Fresa — $125</button>
+<button onclick="enviarWhatsApp('Batida de zapote', 125)">Zapote — $125</button>
+<button onclick="enviarWhatsApp('Batida de lechosa', 125)">Lechosa — $125</button>
+<button onclick="enviarWhatsApp('Batida de mango', 125)">Mango — $125</button>
+<button onclick="enviarWhatsApp('Batida de guineo', 125)">Guineo — $125</button>
+<button onclick="enviarWhatsApp('Batida de granadillo', 150)">Granadillo — $150</button>
+
+<!-- ================== JUGOS ================== -->
+<h2>Jugos naturales</h2>
+<button onclick="enviarWhatsApp('Jugo de chinola', 50)">Chinola</button>
+<button onclick="enviarWhatsApp('Jugo de chinola + avena', 60)">Chinola + avena</button>
+<button onclick="enviarWhatsApp('Jugo de limón', 50)">Limón</button>
+<button onclick="enviarWhatsApp('Jugo de limón + avena', 60)">Limón + avena</button>
+<button onclick="enviarWhatsApp('Jugo de naranja + avena', 70)">Naranja + avena</button>
+<button onclick="enviarWhatsApp('Jugo de remolacha + avena', 70)">Remolacha + avena</button>
+<button onclick="enviarWhatsApp('Jugo de fresa', 60)">Fresa</button>
+<button onclick="enviarWhatsApp('Jugo de cereza', 60)">Cereza</button>
+
+</div>
+
+</body>
+</html>
