@@ -57,13 +57,143 @@ button:hover {
 </style>
 
 <script>
+    /* ===== GUARDAR Y CARGAR NOMBRE ===== */
+    window.onload = function() {
+        const nombreGuardado = localStorage.getItem("nombreCliente");
+        if (nombreGuardado) {
+            document.getElementById("nombreCliente").value = nombreGuardado;
+            actualizarTarjeta(nombreGuardado);
+        }
+    
+        mostrarPedidos(); // Muestra pedidos en la pantalla
+    };
+    
+    /* ===== ACTUALIZAR TARJETA DE CLIENTE ===== */
+    function actualizarTarjeta(nombre) {
+        document.getElementById("cardNombre").innerText = nombre;
+    }
+    
+    /* ===== CONTADOR DE PEDIDOS ===== */
+    let contadorPedidos = parseInt(localStorage.getItem("contadorPedidos")) || 0;
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("contador").innerText = contadorPedidos;
+    });
+    
+    /* ===== FUNCIÓN PARA ENVIAR PEDIDO ===== */
     function enviarWhatsApp(producto, precio) {
-        const numero = "+18494397969";
-        const mensaje = `Pedido: ${producto} - $${precio}`;
-        const url = "https://api.whatsapp.com/send?phone=" + numero + "&text=" + encodeURIComponent(mensaje);
-        window.location.href = url;
+        const nombre = document.getElementById("nombreCliente").value.trim();
+        if (nombre === "") {
+            alert("Por favor escribe tu nombre antes de hacer un pedido.");
+            return;
+        }
+    
+        // Guardar nombre
+        localStorage.setItem("nombreCliente", nombre);
+        actualizarTarjeta(nombre);
+    
+        // Aumentar contador
+        contadorPedidos++;
+        localStorage.setItem("contadorPedidos", contadorPedidos);
+        document.getElementById("contador").innerText = contadorPedidos;
+    
+        // Fecha y hora
+        const ahora = new Date();
+        const fecha = ahora.getDate().toString().padStart(2,'0') + '/' +
+                      (ahora.getMonth()+1).toString().padStart(2,'0') + '/' +
+                      ahora.getFullYear();
+        const hora = ahora.getHours().toString().padStart(2,'0') + ':' +
+                     ahora.getMinutes().toString().padStart(2,'0') + ':' +
+                     ahora.getSeconds().toString().padStart(2,'0');
+    
+        // Guardar pedido en localStorage
+        const pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
+        pedidos.push({nombre, producto, precio, fecha, hora});
+        localStorage.setItem('pedidos', JSON.stringify(pedidos));
+    
+        // WhatsApp
+        const numero = "18494397969";
+        const mensaje = `Pedido de: ${nombre}\nProducto: ${producto}\nPrecio: $${precio}\nFecha: ${fecha}\nHora: ${hora}`;
+        window.location.href = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
+    
+        mostrarPedidos(); // Actualiza lista en pantalla
+    }
+    
+    /* ===== MOSTRAR PEDIDOS EN PANTALLA ===== */
+    function mostrarPedidos() {
+        const pedidosDiv = document.getElementById("listaPedidos");
+        if (!pedidosDiv) return;
+    
+        const pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
+        pedidosDiv.innerHTML = "";
+    
+        pedidos.forEach(p => {
+            const pElem = document.createElement("p");
+            pElem.innerText = `${p.fecha} ${p.hora} - ${p.producto} - $${p.precio}`;
+            pedidosDiv.appendChild(pElem);
+        });
+    }
+    
+    /* ===== FUNCIONES PARA PANEL PERSONAL (panel.html) ===== */
+    function obtenerResumenPedidos() {
+        const pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
+        const resumen = {
+            totalDia: 0,
+            totalMes: 0,
+            totalGeneral: 0,
+            pedidosDia: [],
+            pedidosMes: []
+        };
+        const ahora = new Date();
+        const hoyStr = ahora.getDate().toString().padStart(2,'0') + '/' +
+                       (ahora.getMonth()+1).toString().padStart(2,'0') + '/' +
+                       ahora.getFullYear();
+        const mesStr = (ahora.getMonth()+1).toString().padStart(2,'0') + '/' +
+                        ahora.getFullYear();
+    
+        pedidos.forEach(p => {
+            resumen.totalGeneral += p.precio;
+            if(p.fecha === hoyStr){
+                resumen.totalDia += p.precio;
+                resumen.pedidosDia.push(p);
+            }
+            if(p.fecha.endsWith(mesStr)){
+                resumen.totalMes += p.precio;
+                resumen.pedidosMes.push(p);
+            }
+        });
+        return resumen;
     }
     </script>
+
+    </head>
+    <body>
+    
+    <!-- BOTÓN PARA IR AL MENÚ -->
+    <button onclick="document.querySelector('.container').scrollIntoView({behavior:'smooth'})" 
+    style="background:#1a73e8; width:100%; padding:15px; border-radius:12px; color:white; font-size:18px; margin-bottom:20px;">
+        Haz clic aquí para ver nuestro menú
+    </button>
+    
+    <div class="container">
+    
+    <h1>📋 Menú de la Cafetería</h1>
+    
+    <!-- CAMPO DE NOMBRE -->
+    <label for="nombreCliente"><strong>Escribe tu nombre antes de hacer un pedido:</strong></label>
+    <input type="text" id="nombreCliente" placeholder="Tu nombre aquí"
+    style="width:100%; padding:10px; margin-top:5px; margin-bottom:20px; border-radius:8px; border:1px solid #ccc;">
+    
+    <!-- TARJETA DEL CLIENTE -->
+<div class="cliente-card">
+    <strong>Cliente:</strong> <span id="cardNombre">—</span><br>
+    <strong>Pedidos realizados:</strong> <span id="contador">0</span>
+</div>
+
+<!-- LISTA DE PEDIDOS -->
+<div id="listaPedidos" style="margin-top:20px; padding:10px; background:#eef4ff; border-radius:8px;">
+    <!-- Aquí aparecerán los pedidos realizados -->
+</div>
+
 
 </head>
 <body>
