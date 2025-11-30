@@ -1,308 +1,1051 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cafetería</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Cafetería — Menú y Carrito</title>
+<meta name="description" content="Menú de cafetería con carrito, editar cantidades, enviar por WhatsApp, sonido y guardado.">
 
+<!-- =========================
+     ESTILOS (CSS)
+     ========================= -->
 <style>
-/* ===== ESTILO GENERAL DE LA APP ===== */
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f0f6ff; 
-    margin: 0;
-    padding: 20px;
-    color: #1a3b5f;
-}
 
-/* Contenedor principal */
-.container {
-    max-width: 700px;
-    margin: auto;
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0px 5px 20px rgba(0, 72, 150, 0.15);
-}
-
-/* Títulos de categorías */
-h2 {
-    margin-top: 40px;
-    color: #0a3d91;
-    border-left: 6px solid #0a3d91;
-    padding-left: 10px;
-    font-size: 22px;
-}
-
-/* Botones del menú */
-button {
+/* Estilo inicial de la pantalla de bienvenida */
+  #welcomeScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    background-color: #0a73e8;
-    color: white;
-    border: none;
-    padding: 12px 15px;
-    margin: 10px 0;
-    font-size: 16px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: 0.2s;
-    text-align: left;
-    font-weight: bold;
+    height: 100%;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+:root{
+  --bg:#0f1724;
+  --panel:#0b1220;
+  --card:#0f1a2b;
+  --accent:#ffb86b;
+  --accent-2:#ff7a7a;
+  --muted:#9aa4ad;
+  --glass: rgba(255,255,255,0.03);
+  --success:#22c55e;
+  --danger:#ff5c5c;
+  --bubble:#0b1722;
 }
 
-/* Hover */
-button:hover {
-    background-color: #085ec2;
+/* RESET / BASE */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: "Inter", Arial, sans-serif;
+  background: linear-gradient(180deg,#071018 0%, #0b1420 100%);
+  color:#e6eef6;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  padding:20px;
+}
+
+/* CONTAINER */
+.container{
+  max-width:1100px;
+  margin:0 auto;
+  background: linear-gradient(180deg,#071018,#07121a);
+  border-radius:12px;
+  padding:18px;
+  border:1px solid rgba(255,255,255,0.03);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+}
+
+/* HEADER */
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px;
+}
+.header h1{
+  margin:0;
+  font-size:20px;
+  letter-spacing:0.2px;
+}
+.client-box{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+#nombreCliente{
+  padding:8px 10px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,0.03);
+  background:transparent;
+  color: #e6eef6;
+  width:220px;
+}
+
+/* GRID MENU */
+.menu-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:14px;
+}
+
+/* Category card */
+.category{
+  background: linear-gradient(180deg,#071018,#07121a);
+  border-radius:10px;
+  padding:12px;
+  border:1px solid rgba(255,255,255,0.02);
+}
+.category h2{
+  margin:0 0 8px 0;
+  font-size:16px;
+  color:#fff;
+  border-left:4px solid var(--accent);
+  padding-left:10px;
+}
+
+/* producto row */
+.producto-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:10px;
+  border-radius:10px;
+  background: linear-gradient(180deg,#07131a,#051018);
+  border:1px solid rgba(255,255,255,0.02);
+  margin-bottom:8px;
+  transition: transform .12s ease, box-shadow .14s ease;
+}
+.producto-row:hover{ transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+
+.prod-info{ flex:1 1 auto; font-weight:700; color:#eaf3ff; }
+.prod-price{ color:var(--muted); font-weight:800; margin-left:8px; font-size:14px; }
+
+/* controls */
+.controls{ display:flex; align-items:center; gap:10px; }
+.cantidadBox{ display:flex; align-items:center; gap:6px; border-radius:8px; padding:4px; background:var(--glass); border:1px solid rgba(255,255,255,0.02); }
+.cantidadBox button{ width:34px; height:34px; border-radius:6px; border:none; background:transparent; color:var(--accent); font-weight:800; font-size:18px; cursor:pointer; }
+.cantidadBox input{ width:56px; text-align:center; font-size:15px; border:none; outline:none; background:transparent; color:#e6eef6; appearance:textfield; -webkit-appearance:none; -moz-appearance:textfield; }
+
+/* add button */
+.btnAgregar{
+  background:transparent;
+  color:var(--accent);
+  border:1px solid rgba(255,184,107,0.08);
+  padding:8px 12px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:800;
+}
+
+/* FLOATING CART BUTTON */
+.cart-toggle{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  z-index:1200;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 14px;
+  border-radius:40px;
+  background: linear-gradient(180deg,#0b1116,#061013);
+  border:1px solid rgba(255,255,255,0.04);
+  cursor:pointer;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+}
+.cart-toggle .dot{ width:36px; height:36px; border-radius:8px; background:#061018; display:flex; align-items:center; justify-content:center; color:var(--accent); font-weight:900; font-size:18px; }
+.cart-toggle .label{ color:#e6eef6; font-weight:800; }
+
+/* CART PANEL (sidebar) */
+.cart-panel{
+  position:fixed;
+  right:0;
+  top:0;
+  height:100vh;
+  width:420px;
+  max-width:96%;
+  background: linear-gradient(180deg,#071018,#05080b);
+  transform:translateX(110%);
+  transition: transform .28s cubic-bezier(.22,.9,.3,1);
+  z-index:1300;
+  border-left:1px solid rgba(255,255,255,0.03);
+  display:flex;
+  flex-direction:column;
+}
+.cart-panel.open{ transform:translateX(0%); }
+.cart-header{ padding:16px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); }
+.cart-body{ padding:12px; overflow:auto; flex:1 1 auto; }
+.cart-footer{ padding:12px; border-top:1px solid rgba(255,255,255,0.03); display:flex; justify-content:space-between; gap:8px; align-items:center; }
+
+/* cart item bubble */
+.cart-item{ display:flex; gap:10px; align-items:flex-start; margin-bottom:12px; padding:10px; border-radius:10px; background: linear-gradient(180deg,#071116,#061018); border:1px solid rgba(255,255,255,0.02); }
+.cart-item .left{ flex:1 1 auto; }
+.cart-item .title{ font-weight:800; color:#eaf3ff; }
+.cart-item .meta{ color:var(--muted); font-size:13px; margin-top:6px; }
+.cart-item .qty-controls{ display:flex; gap:6px; align-items:center; margin-top:8px; }
+.icon-btn{ background:transparent; border:1px solid rgba(255,255,255,0.03); padding:6px 8px; border-radius:8px; cursor:pointer; color:var(--muted); }
+
+/* send button */
+.send-all{ background:var(--accent); color:#071014; font-weight:900; padding:10px 12px; border-radius:10px; border:none; cursor:pointer; }
+.empty-btn{ background:transparent; color:var(--danger); border:1px solid rgba(255,92,92,0.08); padding:8px 10px; border-radius:8px; cursor:pointer; }
+
+/* toast */
+.toast{ position:fixed; left:50%; transform:translateX(-50%); bottom:90px; background:#071018; padding:10px 16px; border-radius:10px; border:1px solid rgba(255,255,255,0.04); color:#e6eef6; box-shadow:0 8px 30px rgba(0,0,0,0.6); z-index:1400; opacity:0; transform-origin:center; transition:opacity .18s, transform .18s; }
+.toast.show{ opacity:1; transform:translateX(-50%) translateY(-6px); }
+
+/* highlight animation for product on menu when added */
+.flash{
+  animation: flashAnim .9s ease;
+}
+@keyframes flashAnim{
+  0%{ box-shadow: 0 0 0 rgba(255,184,107,0.0); transform: none; }
+  20%{ box-shadow: 0 8px 24px rgba(255,184,107,0.12); transform: translateY(-4px); }
+  100%{ box-shadow: none; transform: none; }
+}
+
+/* pedido histórico (main page) */
+.pedidos-list{ margin-top:12px; padding:10px; border-radius:10px; background: linear-gradient(180deg,#061014,#041011); border:1px solid rgba(255,255,255,0.02); }
+.pedido-card{ padding:10px; border-radius:8px; background:linear-gradient(180deg,#051014,#041012); margin-bottom:8px; border:1px solid rgba(255,255,255,0.02); }
+
+/* responsive */
+@media (max-width:820px){
+  .menu-grid{ grid-template-columns:1fr }
+  .cart-panel{ width:92% }
+  .cart-toggle{ right:12px; bottom:12px; }
+}
+/* remove number input spin for all */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  appearance: textfield; /* versión moderna sin advertencias */
 }
 </style>
-
-<script>
-    /* ===== GUARDAR Y CARGAR NOMBRE ===== */
-    window.onload = function() {
-        const nombreGuardado = localStorage.getItem("nombreCliente");
-        if (nombreGuardado) {
-            document.getElementById("nombreCliente").value = nombreGuardado;
-            actualizarTarjeta(nombreGuardado);
-        }
-    
-        mostrarPedidos(); // Muestra pedidos en la pantalla
-    };
-    
-    /* ===== ACTUALIZAR TARJETA DE CLIENTE ===== */
-    function actualizarTarjeta(nombre) {
-        document.getElementById("cardNombre").innerText = nombre;
-    }
-    
-    /* ===== CONTADOR DE PEDIDOS ===== */
-    let contadorPedidos = parseInt(localStorage.getItem("contadorPedidos")) || 0;
-    document.addEventListener("DOMContentLoaded", () => {
-        document.getElementById("contador").innerText = contadorPedidos;
-    });
-    
-    /* ===== FUNCIÓN PARA ENVIAR PEDIDO ===== */
-    function enviarWhatsApp(producto, precio) {
-        const nombre = document.getElementById("nombreCliente").value.trim();
-        if (nombre === "") {
-            alert("Por favor escribe tu nombre antes de hacer un pedido.");
-            return;
-        }
-    
-        // Guardar nombre
-        localStorage.setItem("nombreCliente", nombre);
-        actualizarTarjeta(nombre);
-    
-        // Aumentar contador
-        contadorPedidos++;
-        localStorage.setItem("contadorPedidos", contadorPedidos);
-        document.getElementById("contador").innerText = contadorPedidos;
-    
-        // Fecha y hora
-        const ahora = new Date();
-        const fecha = ahora.getDate().toString().padStart(2,'0') + '/' +
-                      (ahora.getMonth()+1).toString().padStart(2,'0') + '/' +
-                      ahora.getFullYear();
-        const hora = ahora.getHours().toString().padStart(2,'0') + ':' +
-                     ahora.getMinutes().toString().padStart(2,'0') + ':' +
-                     ahora.getSeconds().toString().padStart(2,'0');
-    
-        // Guardar pedido en localStorage
-        const pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
-        pedidos.push({nombre, producto, precio, fecha, hora});
-        localStorage.setItem('pedidos', JSON.stringify(pedidos));
-    
-        // WhatsApp
-        const numero = "18297490858";
-        const mensaje = `Pedido de: ${nombre}\nProducto: ${producto}\nPrecio: $${precio}\nFecha: ${fecha}\nHora: ${hora}`;
-        window.location.href = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
-    
-        mostrarPedidos(); // Actualiza lista en pantalla
-    }
-    
-    /* ===== MOSTRAR PEDIDOS EN PANTALLA ===== */
-    function mostrarPedidos() {
-        const pedidosDiv = document.getElementById("listaPedidos");
-        if (!pedidosDiv) return;
-    
-        const pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
-        pedidosDiv.innerHTML = "";
-    
-        pedidos.forEach(p => {
-            const pElem = document.createElement("p");
-            pElem.innerText = `${p.fecha} ${p.hora} - ${p.producto} - $${p.precio}`;
-            pedidosDiv.appendChild(pElem);
-        });
-    }
-    
-    /* ===== FUNCIONES PARA PANEL PERSONAL (panel.html) ===== */
-    function obtenerResumenPedidos() {
-        const pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
-        const resumen = {
-            totalDia: 0,
-            totalMes: 0,
-            totalGeneral: 0,
-            pedidosDia: [],
-            pedidosMes: []
-        };
-        const ahora = new Date();
-        const hoyStr = ahora.getDate().toString().padStart(2,'0') + '/' +
-                       (ahora.getMonth()+1).toString().padStart(2,'0') + '/' +
-                       ahora.getFullYear();
-        const mesStr = (ahora.getMonth()+1).toString().padStart(2,'0') + '/' +
-                        ahora.getFullYear();
-    
-        pedidos.forEach(p => {
-            resumen.totalGeneral += p.precio;
-            if(p.fecha === hoyStr){
-                resumen.totalDia += p.precio;
-                resumen.pedidosDia.push(p);
-            }
-            if(p.fecha.endsWith(mesStr)){
-                resumen.totalMes += p.precio;
-                resumen.pedidosMes.push(p);
-            }
-        });
-        return resumen;
-    }
-    </script>
-
-    </head>
-    <body>
-    
-    <!-- BOTÓN PARA IR AL MENÚ -->
-    <button onclick="document.querySelector('.container').scrollIntoView({behavior:'smooth'})" 
-    style="background:#1a73e8; width:100%; padding:15px; border-radius:12px; color:white; font-size:18px; margin-bottom:20px;">
-        Haz clic aquí para ver nuestro menú
-    </button>
-    
-    <div class="container">
-    
-    <h1>📋 Menú de la Cafetería</h1>
-    
-    <!-- CAMPO DE NOMBRE -->
-    <label for="nombreCliente"><strong>Escribe tu nombre antes de hacer un pedido:</strong></label>
-    <input type="text" id="nombreCliente" placeholder="Tu nombre aquí"
-    style="width:100%; padding:10px; margin-top:5px; margin-bottom:20px; border-radius:8px; border:1px solid #ccc;">
-    
-    <!-- TARJETA DEL CLIENTE -->
-<div class="cliente-card">
-    <strong>Cliente:</strong> <span id="cardNombre">—</span><br>
-    <strong>Pedidos realizados:</strong> <span id="contador">0</span>
-</div>
-
-<!-- LISTA DE PEDIDOS -->
-<div id="listaPedidos" style="margin-top:20px; padding:10px; background:#eef4ff; border-radius:8px;">
-    <!-- Aquí aparecerán los pedidos realizados -->
-</div>
-
-
 </head>
 <body>
 
-<div class="container">
+<!-- Pantalla de bienvenida -->
+<div id="welcomeScreen">
+  <img src="pngminimarket.jpg" alt="Logo">
+  <button id="enterBtn">Entrar al Menú</button>
+</div>
+<!-- =========================
+     HTML (INTERFAZ) - Parte visible
+     ========================= -->
+<div class="container" aria-live="polite">
+  <div class="header">
+    <h1>☕ Cafetería — Menú</h1>
+    <div class="client-box">
+      <label for="nombreCliente" style="color:var(--muted);font-size:13px;margin-right:6px">Tu nombre</label>
+      <input id="nombreCliente" placeholder="Tu nombre aquí">
+      <div id="contadorBadge" style="background:var(--accent); color:#071014; padding:6px 10px; border-radius:8px; font-weight:800; margin-left:8px">0</div>
+    </div>
+  </div>
 
-<h1>📋 Menú de la Cafetería</h1>
+  <div class="menu-grid" id="menuGrid">
+    <!-- === Tostadas === -->
+    <section class="category">
+      <h2>Tostadas</h2>
 
-<!-- ================== TOSTADAS ================== -->
-<h2>Tostadas</h2>
-<button onclick="enviarWhatsApp('Tostada jamón y queso', 50)">Jamón y queso — $50</button>
-<button onclick="enviarWhatsApp('Tostada huevo, jamón y queso', 70)">Huevo, jamón y queso — $70</button>
-<button onclick="enviarWhatsApp('Tostada pollo y queso', 80)">Pollo y queso — $80</button>
-<button onclick="enviarWhatsApp('Tostada pollo, huevo y queso', 100)">Pollo, huevo y queso — $100</button>
-<button onclick="enviarWhatsApp('Tostada salami, queso y huevo', 100)">Salami, queso y huevo — $100</button>
+      <div class="producto-row" data-id="tostada-jq">
+        <div class="prod-info">Tostada jamón y queso <span class="prod-price">$50</span></div>
+        <div class="controls">
+          <div class="cantidadBox">
+            <button class="menos">−</button>
+            <input type="number" value="1" min="1" max="100" data-nombre="Tostada jamón y queso" data-precio="50">
+            <button class="mas">+</button>
+          </div>
+          <button class="btnAgregar" data-nombre="Tostada jamón y queso" data-precio="50">Agregar</button>
+        </div>
+      </div>
 
-<!-- ================== SANDWICH ================== -->
-<h2>Sándwich</h2>
-<button onclick="enviarWhatsApp('Sándwich jamón y queso', 100)">Jamón y queso — $100</button>
-<button onclick="enviarWhatsApp('Sándwich pollo y queso', 125)">Pollo y queso — $125</button>
-<button onclick="enviarWhatsApp('Sándwich pollo y huevo', 150)">Pollo y huevo — $150</button>
-<button onclick="enviarWhatsApp('Sándwich pollo, huevo y queso', 175)">Pollo, huevo y queso — $175</button>
-<button onclick="enviarWhatsApp('Club sándwich + papa', 250)">Club sándwich + papa — $250</button>
-<button onclick="enviarWhatsApp('Club sándwich', 200)">Club sándwich — $200</button>
-<button onclick="enviarWhatsApp('Derretido de queso', 100)">Derretido de queso — $100</button>
+      <div class="producto-row" data-id="tostada-hjq">
+        <div class="prod-info">Tostada huevo, jamón y queso <span class="prod-price">$70</span></div>
+        <div class="controls">
+          <div class="cantidadBox">
+            <button class="menos">−</button>
+            <input type="number" value="1" min="1" max="100" data-nombre="Tostada huevo, jamón y queso" data-precio="70">
+            <button class="mas">+</button>
+          </div>
+          <button class="btnAgregar" data-nombre="Tostada huevo, jamón y queso" data-precio="70">Agregar</button>
+        </div>
+      </div>
 
-<!-- ================== BURRITOS ================== -->
-<h2>Burritos</h2>
-<button onclick="enviarWhatsApp('Burrito pollo, papa y queso', 125)">Pollo, papa y queso — $125</button>
-<button onclick="enviarWhatsApp('Burrito pollo, queso, cebolla y huevo', 150)">Pollo, queso, cebolla y huevo — $150</button>
-<button onclick="enviarWhatsApp('Burrito triple pollo y triple queso', 200)">Triple pollo y triple queso — $200</button>
-<button onclick="enviarWhatsApp('Quesadilla', 150)">Quesadilla — $150</button>
+      <div class="producto-row" data-id="tostada-pq">
+        <div class="prod-info">Tostada pollo y queso <span class="prod-price">$80</span></div>
+        <div class="controls">
+          <div class="cantidadBox">
+            <button class="menos">−</button>
+            <input type="number" value="1" min="1" max="100" data-nombre="Tostada pollo y queso" data-precio="80">
+            <button class="mas">+</button>
+          </div>
+          <button class="btnAgregar" data-nombre="Tostada pollo y queso" data-precio="80">Agregar</button>
+        </div>
+      </div>
 
-<!-- ================== TORTILLAS ================== -->
-<h2>Tortillas</h2>
-<button onclick="enviarWhatsApp('Tortilla huevo, queso, pollo y tomate', 150)">Huevo, queso, pollo y tomate — $150</button>
-<button onclick="enviarWhatsApp('Tortilla huevo, pollo y queso', 125)">Huevo, pollo y queso — $125</button>
-<button onclick="enviarWhatsApp('Tortilla huevo, tuna y queso', 200)">Huevo, tuna y queso — $200</button>
+      <div class="producto-row" data-id="tostada-ppq">
+        <div class="prod-info">Tostada pollo, huevo y queso <span class="prod-price">$100</span></div>
+        <div class="controls">
+          <div class="cantidadBox">
+            <button class="menos">−</button>
+            <input type="number" value="1" min="1" max="100" data-nombre="Tostada pollo, huevo y queso" data-precio="100">
+            <button class="mas">+</button>
+          </div>
+          <button class="btnAgregar" data-nombre="Tostada pollo, huevo y queso" data-precio="100">Agregar</button>
+        </div>
+      </div>
 
-<!-- ================== FRITO ================== -->
-<h2>Frito / Tostones</h2>
+      <div class="producto-row" data-id="tostada-sqh">
+        <div class="prod-info">Tostada salami, queso y huevo <span class="prod-price">$100</span></div>
+        <div class="controls">
+          <div class="cantidadBox">
+            <button class="menos">−</button>
+            <input type="number" value="1" min="1" max="100" data-nombre="Tostada salami, queso y huevo" data-precio="100">
+            <button class="mas">+</button>
+          </div>
+          <button class="btnAgregar" data-nombre="Tostada salami, queso y huevo" data-precio="100">Agregar</button>
+        </div>
+      </div>
+    </section>
 
-<button onclick="enviarWhatsApp('Frito salami', 100)">Salami — $100</button>
-<button onclick="enviarWhatsApp('Frito salami', 150)">Salami — $150</button>
-<button onclick="enviarWhatsApp('Frito salami', 200)">Salami — $200</button>
-<button onclick="enviarWhatsApp('Frito salami', 250)">Salami — $250</button>
+    <!-- === Sándwich === -->
+    <section class="category">
+      <h2>Sándwich</h2>
+      <div class="producto-row"><div class="prod-info">Sándwich jamón y queso <span class="prod-price">$100</span></div>
+        <div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Sándwich jamón y queso" data-precio="100"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Sándwich jamón y queso" data-precio="100">Agregar</button></div></div>
 
-<button onclick="enviarWhatsApp('Frito chuleta', 150)">Chuleta — $150</button>
-<button onclick="enviarWhatsApp('Frito chuleta', 200)">Chuleta — $200</button>
-<button onclick="enviarWhatsApp('Frito chuleta', 250)">Chuleta — $250</button>
-<button onclick="enviarWhatsApp('Frito chuleta', 300)">Chuleta — $300</button>
+      <div class="producto-row"><div class="prod-info">Sándwich pollo y queso <span class="prod-price">$125</span></div>
+        <div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Sándwich pollo y queso" data-precio="125"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Sándwich pollo y queso" data-precio="125">Agregar</button></div></div>
 
-<button onclick="enviarWhatsApp('Frito longaniza', 100)">Longaniza — $100</button>
-<button onclick="enviarWhatsApp('Frito longaniza', 150)">Longaniza — $150</button>
-<button onclick="enviarWhatsApp('Frito longaniza', 200)">Longaniza — $200</button>
-<button onclick="enviarWhatsApp('Frito longaniza', 250)">Longaniza — $250</button>
+      <div class="producto-row"><div class="prod-info">Sándwich pollo y huevo <span class="prod-price">$150</span></div>
+        <div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Sándwich pollo y huevo" data-precio="150"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Sándwich pollo y huevo" data-precio="150">Agregar</button></div></div>
 
-<button onclick="enviarWhatsApp('Frito salchicha', 100)">Salchicha — $100</button>
-<button onclick="enviarWhatsApp('Frito salchicha', 150)">Salchicha — $150</button>
-<button onclick="enviarWhatsApp('Frito salchicha', 200)">Salchicha — $200</button>
+      <div class="producto-row"><div class="prod-info">Sándwich pollo, huevo y queso <span class="prod-price">$175</span></div>
+        <div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Sándwich pollo, huevo y queso" data-precio="175"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Sándwich pollo, huevo y queso" data-precio="175">Agregar</button></div></div>
 
-<button onclick="enviarWhatsApp('Frito huevo', 100)">Huevo — $100</button>
-<button onclick="enviarWhatsApp('Frito huevo', 150)">Huevo — $150</button>
-<button onclick="enviarWhatsApp('Frito huevo', 200)">Huevo — $200</button>
 
-<button onclick="enviarWhatsApp('Frito queso', 100)">Queso — $100</button>
-<button onclick="enviarWhatsApp('Frito queso', 150)">Queso — $150</button>
-<button onclick="enviarWhatsApp('Frito queso', 200)">Queso — $200</button>
+      <div class="producto-row"><div class="prod-info">Club sándwich <span class="prod-price">$200</span></div>
+        <div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Club sándwich" data-precio="200"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Club sándwich" data-precio="200">Agregar</button></div></div>
 
-<!-- ================== PAPAS ================== -->
-<h2>Papas fritas</h2>
-<button onclick="enviarWhatsApp('Salchipapa', 100)">Salchipapa — $100</button>
-<button onclick="enviarWhatsApp('Salchipapa', 150)">Salchipapa — $150</button>
-<button onclick="enviarWhatsApp('Salchipapa', 200)">Salchipapa — $200</button>
-<button onclick="enviarWhatsApp('Salchipapa', 250)">Salchipapa — $250</button>
+<div class="producto-row"><div class="prod-info">Club sándwich + papa <span class="prod-price">$250</span></div>
+        <div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Club sándwich + papa" data-precio="250"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Club sándwich + papa" data-precio="250">Agregar</button></div></div>
 
-<button onclick="enviarWhatsApp('Yaroa', 200)">Yaroa — $200</button>
-<button onclick="enviarWhatsApp('Yaroa', 250)">Yaroa — $250</button>
-<button onclick="enviarWhatsApp('Yaroa', 300)">Yaroa — $300</button>
+      <div class="producto-row"><div class="prod-info">Derretido de queso <span class="prod-price">$100</span></div>
+        <div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Derretido de queso" data-precio="100"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Derretido de queso" data-precio="100">Agregar</button></div></div>
+    </section>
 
-<button onclick="enviarWhatsApp('Salchicha y pollo', 150)">Salchicha y pollo — $150</button>
-<button onclick="enviarWhatsApp('Salchicha y pollo', 200)">Salchicha y pollo — $200</button>
-<button onclick="enviarWhatsApp('Salchicha y pollo', 250)">Salchicha y pollo — $250</button>
+    <!-- Additional menu sections (Burritos, Tortillas, Frito, Papas, Batidas, Jugos) -->
+    <!-- For brevity I include them compactly but they work exactly like above -->
+    <section class="category">
+      <h2>Burritos</h2>
+      <div class="producto-row"><div class="prod-info">Burrito pollo, papa y queso <span class="prod-price">$125</span></div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Burrito pollo, papa y queso" data-precio="125"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Burrito pollo, papa y queso" data-precio="125">Agregar</button></div></div>
 
-<button onclick="enviarWhatsApp('Chuleta', 150)">Chuleta — $150</button>
-<button onclick="enviarWhatsApp('Chuleta', 200)">Chuleta — $200</button>
-<button onclick="enviarWhatsApp('Chuleta', 250)">Chuleta — $250</button>
+      <div class="producto-row"><div class="prod-info">Burrito pollo, queso, cebolla y huevo <span class="prod-price">$150</span></div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Burrito pollo, queso, cebolla y huevo" data-precio="150"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Burrito pollo, queso, cebolla y huevo" data-precio="150">Agregar</button></div></div>
 
-<!-- ================== BATIDAS ================== -->
-<h2>Batidas</h2>
-<button onclick="enviarWhatsApp('Batida de fresa', 125)">Fresa — $125</button>
-<button onclick="enviarWhatsApp('Batida de zapote', 125)">Zapote — $125</button>
-<button onclick="enviarWhatsApp('Batida de lechosa', 125)">Lechosa — $125</button>
-<button onclick="enviarWhatsApp('Batida de mango', 125)">Mango — $125</button>
-<button onclick="enviarWhatsApp('Batida de guineo', 125)">Guineo — $125</button>
-<button onclick="enviarWhatsApp('Batida de granadillo', 150)">Granadillo — $150</button>
+      <div class="producto-row"><div class="prod-info">Burrito triple pollo y triple queso <span class="prod-price">$200</span></div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Burrito triple pollo y triple queso" data-precio="200"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Burrito triple pollo y triple queso" data-precio="200">Agregar</button></div></div>
 
-<!-- ================== JUGOS ================== -->
-<h2>Jugos naturales</h2>
-<button onclick="enviarWhatsApp('Jugo de chinola', 50)">Chinola</button>
-<button onclick="enviarWhatsApp('Jugo de chinola + avena', 50)">Chinola + avena</button>
-<button onclick="enviarWhatsApp('Jugo de limón', 50)">Limón</button>
-<button onclick="enviarWhatsApp('Jugo de limón + avena', 50)">Limón + avena</button>
-<button onclick="enviarWhatsApp('Jugo de naranja + avena', 50)">Naranja + avena</button>
-<button onclick="enviarWhatsApp('Jugo de remolacha + avena', 50)">Remolacha + avena</button>
-<button onclick="enviarWhatsApp('Jugo de fresa', 50)">Fresa</button>
-<button onclick="enviarWhatsApp('Jugo de cereza', 50)">Cereza</button>
+      <div class="producto-row"><div class="prod-info">Quesadilla <span class="prod-price">$150</span></div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Quesadilla" data-precio="150"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Quesadilla" data-precio="150">Agregar</button></div></div>
+    </section>
+
+    <section class="category">
+      <h2>Tortillas</h2>
+
+      <div class="producto-row"><div class="prod-info">Tortilla huevo, pollo y queso <span class="prod-price">$125</span></div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Tortilla huevo, pollo y queso" data-precio="125"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Tortilla huevo, pollo y queso" data-precio="125">Agregar</button></div></div>
+      
+      <div class="producto-row"><div class="prod-info">Tortilla huevo, queso, pollo y tomate <span class="prod-price">$150</span></div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Tortilla huevo, queso, pollo y tomate" data-precio="150"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Tortilla huevo, queso, pollo y tomate" data-precio="150">Agregar</button></div></div>
+
+      <div class="producto-row"><div class="prod-info">Tortilla huevo, tuna y queso <span class="prod-price">$200</span></div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Tortilla huevo, tuna y queso" data-precio="200"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Tortilla huevo, tuna y queso" data-precio="200">Agregar</button></div></div>
+    </section>
+
+    <section class="category">
+      <h2>Frito / Tostones</h2>
+      <!-- some items -->
+      <div class="producto-row"><div class="prod-info">Frito salami — $100</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Frito salami" data-precio="100"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito salami" data-precio="100">Agregar</button></div></div>
+
+      <div class="producto-row"><div class="prod-info">Frito chuleta — $150</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Frito chuleta" data-precio="150"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito chuleta" data-precio="150">Agregar</button></div></div>
+
+      <div class="producto-row"><div class="prod-info">Frito longaniza — $100</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Frito longaniza" data-precio="100"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito longaniza" data-precio="100">Agregar</button></div></div>
+    </section>
+
+    <section class="category">
+      <h2>Papas fritas</h2>
+      <div class="producto-row"><div class="prod-info">Salchipapa — $100</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Salchipapa" data-precio="100"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Salchipapa" data-precio="100">Agregar</button></div></div>
+
+      <div class="producto-row"><div class="prod-info">Yaroa — $200</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Yaroa" data-precio="200"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Yaroa" data-precio="200">Agregar</button></div></div>
+    </section>
+
+    <section class="category">
+      <h2>Batidas</h2>
+      <div class="producto-row"><div class="prod-info">Batida de fresa — $125</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Batida de fresa" data-precio="125"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Batida de fresa" data-precio="125">Agregar</button></div></div>
+
+      <div class="producto-row"><div class="prod-info">Batida de granadillo — $150</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Batida de granadillo" data-precio="150"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Batida de granadillo" data-precio="150">Agregar</button></div></div>
+    </section>
+
+    <section class="category">
+      <h2>Jugos naturales</h2>
+      <div class="producto-row"><div class="prod-info">Jugo de chinola — $50</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Jugo de chinola" data-precio="50"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Jugo de chinola" data-precio="50">Agregar</button></div></div>
+
+      <div class="producto-row"><div class="prod-info">Jugo de naranja + avena — $50</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Jugo de naranja + avena" data-precio="50"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Jugo de naranja + avena" data-precio="50">Agregar</button></div></div>
+
+      <div class="producto-row"><div class="prod-info">Jugo de remolacha + avena — $50</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Jugo de remolacha + avena" data-precio="50"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Jugo de remolacha + avena" data-precio="50">Agregar</button></div></div>
+    </section>
+  </div>
+
+  <!-- historial sencillo -->
+  <div class="pedidos-list" id="historialPedidos">
+    <h3 style="color:var(--muted);margin:0 0 8px 0">Historial rápido</h3>
+    <div id="pedidosInner"></div>
+  </div>
 
 </div>
+
+<!-- FLOATING CART TOGGLE -->
+<button class="cart-toggle" id="cartToggle" aria-label="Ver carrito">
+  <div class="dot">🛒</div>
+  <div class="label">Ver carrito</div>
+</button>
+
+<!-- CART PANEL (sidebar) -->
+<aside class="cart-panel" id="cartPanel" aria-hidden="true">
+  <div class="cart-header">
+    <div>
+      <div style="font-weight:900">Tu Carrito</div>
+      <div id="cartCountSmall" style="color:var(--muted);font-size:13px">0 items</div>
+    </div>
+    <div>
+      <button id="closeCartBtn" class="icon-btn">Cerrar</button>
+    </div>
+  </div>
+
+  <div class="cart-body">
+    <div id="cartItems"></div>
+
+    <div style="margin-top:8px; display:flex; justify-content:space-between; gap:8px; align-items:center">
+      <button id="emptyCartBtn" class="empty-btn">Vaciar carrito</button>
+      <div style="font-weight:900;color:var(--muted)">Total: <span id="cartSubtotal">0</span> RD$</div>
+    </div>
+
+    <hr style="border:none;height:1px;background:rgba(255,255,255,0.03); margin:12px 0">
+
+    <div id="detallePedidoBox" style="white-space:pre-line; color:var(--muted); font-size:14px;"></div>
+  </div>
+
+  <div class="cart-footer">
+    <div style="display:flex; gap:8px; align-items:center;">
+      <div class="small" style="color:var(--muted)">Nº WhatsApp:</div>
+      <div style="font-weight:900; color:var(--accent)">+18494397969</div>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button id="exportWhatsBtn" class="send-all">Enviar por WhatsApp</button>
+    </div>
+  </div>
+</aside>
+
+<!-- TOAST -->
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<!-- AUDIO (sonido al agregar / enviar) -->
+<audio id="soundAdd" preload="auto">
+  <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_8775b8fd96.mp3?filename=correct-2-46134.mp3" type="audio/mp3">
+</audio>
+<audio id="soundSend" preload="auto">
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_1eda6b5a1b.mp3?filename=click-124472.mp3" type="audio/mp3">
+</audio>
+
+<!-- =========================
+     JAVASCRIPT (LOGICA)
+     ========================= -->
+<script>
+  
+/* ====== CONFIG ====== */
+const WHATSAPP_NUMBER = "18297490858"; // deja como está (sin +)
+const MAX_QTY = 100;
+
+/* ====== STATE ====== */
+let cart = JSON.parse(localStorage.getItem('cart_v2')) || [];
+let pedidosHist = JSON.parse(localStorage.getItem('hist_pedidos_v2')) || [];
+const nombreInput = document.getElementById('nombreCliente');
+const contadorBadge = document.getElementById('contadorBadge');
+const cartToggle = document.getElementById('cartToggle');
+const cartPanel = document.getElementById('cartPanel');
+const closeCartBtn = document.getElementById('closeCartBtn');
+const cartItemsBox = document.getElementById('cartItems');
+const cartSubtotalEl = document.getElementById('cartSubtotal');
+const cartCountSmall = document.getElementById('cartCountSmall');
+const toastEl = document.getElementById('toast');
+const soundAdd = document.getElementById('soundAdd');
+const soundSend = document.getElementById('soundSend');
+const pedidosInner = document.getElementById('pedidosInner');
+const detallePedidoBox = document.getElementById('detallePedidoBox');
+
+/* ====== UTIL ====== */
+function saveState(){
+  localStorage.setItem('cart_v2', JSON.stringify(cart));
+  localStorage.setItem('hist_pedidos_v2', JSON.stringify(pedidosHist));
+}
+function showToast(text, type = 'ok'){ // type: ok | danger
+  toastEl.textContent = text;
+  toastEl.style.background = type === 'ok' ? '#071018' : 'linear-gradient(90deg,#3b0f0f,#661111)';
+  toastEl.classList.add('show');
+  setTimeout(()=> toastEl.classList.remove('show'), 2500);
+}
+
+/* ====== INIT UI ====== */
+function updateCounters(){
+  contadorBadge.textContent = cart.reduce((s,i)=> s + i.qty, 0);
+  cartCountSmall.textContent = cart.length + (cart.length===1? ' item' : ' items');
+}
+function renderPedidosHist(){
+  pedidosInner.innerHTML = '';
+  if(pedidosHist.length === 0){
+    pedidosInner.innerHTML = '<div style="color:var(--muted)">No hay pedidos guardados</div>';
+    return;
+  }
+  pedidosHist.slice().reverse().forEach(p=>{
+    const el = document.createElement('div');
+    el.className = 'pedido-card';
+    el.innerHTML = `<strong>${p.nombre}</strong> — Total: RD$ ${p.total} <br><small style="color:var(--muted)">${p.fecha} ${p.hora}</small>`;
+    pedidosInner.appendChild(el);
+  });
+}
+
+/* ====== RENDER CART ====== */
+function renderCart(){
+  cartItemsBox.innerHTML = '';
+  if(cart.length === 0){
+    cartItemsBox.innerHTML = '<div style="color:var(--muted)">Tu carrito está vacío</div>';
+    cartSubtotalEl.textContent = '0';
+    updateCounters();
+    detallePedidoBox.textContent = '';
+    return;
+  }
+
+  let subtotal = 0;
+  cart.forEach((item, idx) => {
+    subtotal += item.qty * item.price;
+    const itemWrap = document.createElement('div');
+    itemWrap.className = 'cart-item';
+    itemWrap.dataset.idx = idx;
+
+    itemWrap.innerHTML = `
+      <div class="left">
+        <div class="title">${escapeHtml(item.name)}</div>
+        <div class="meta">RD$ ${item.price} · Agregado: ${item.time} · ${item.date}</div>
+        <div class="qty-controls">
+          <button class="icon-btn edit-minus" data-idx="${idx}">−</button>
+          <input data-idx="${idx}" class="cart-qty-input" type="number" min="1" max="${MAX_QTY}" value="${item.qty}" style="width:62px;text-align:center;background:transparent;border:1px solid rgba(255,255,255,0.02);color:#eaf3ff;padding:6px;border-radius:6px">
+          <button class="icon-btn edit-plus" data-idx="${idx}">+</button>
+          <button class="icon-btn btn-edit" data-idx="${idx}" title="Confirmar edición">OK</button>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+        <div style="font-weight:900">RD$ ${item.qty * item.price}</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <button class="icon-btn btn-send-item" data-idx="${idx}">📲</button>
+          <button class="icon-btn btn-delete" data-idx="${idx}">🗑</button>
+        </div>
+      </div>
+    `;
+    cartItemsBox.appendChild(itemWrap);
+  });
+
+  cartSubtotalEl.textContent = subtotal;
+  // detalle pedido box
+  detallePedidoBox.textContent = `cart.map(i=> ${i.qty} x ${i.name}  — RD$ ${i.price} c/u  (${i.time})).join('\\n')`;
+  updateCounters();
+  saveState();
+}
+
+/* ====== ESCAPE HTML (seguridad simple) ====== */
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]; });
+}
+
+/* ====== ADD FROM MENU ====== */
+document.addEventListener('click', function(e){
+  // plus / minus on menu
+  if(e.target.classList.contains('mas') || e.target.classList.contains('menos')){
+    const box = e.target.closest('.cantidadBox');
+    const input = box.querySelector('input');
+    let val = parseInt(input.value) || 1;
+    if(e.target.classList.contains('mas')){ if(val < MAX_QTY) input.value = val + 1; }
+    else { if(val > 1) input.value = val - 1; }
+    return;
+  }
+
+  // agregar botón
+  if(e.target.classList.contains('btnAgregar')){
+    const name = e.target.dataset.nombre;
+    const price = parseFloat(e.target.dataset.precio);
+    const box = e.target.closest('.controls');
+    const input = box.querySelector('input[type=number]');
+    let qty = parseInt(input.value) || 1;
+    if(qty < 1) qty = 1;
+    if(qty > MAX_QTY) qty = MAX_QTY;
+
+    addToCart(name, price, qty, e.target.closest('.producto-row'));
+    return;
+  }
+
+  // cart toggle open/close
+  if(e.target.id === 'cartToggle' || e.target.closest('#cartToggle')){
+    toggleCart();
+    return;
+  }
+  // close cart via button
+  if(e.target.id === 'closeCartBtn'){ closeCart(); return; }
+
+  // empty cart
+  if(e.target.id === 'emptyCartBtn' || e.target.closest('#emptyCartBtn')){
+    emptyCart();
+    return;
+  }
+
+  // export whatsapp
+  if(e.target.id === 'exportWhatsBtn' || e.target.closest('#exportWhatsBtn')){
+    exportCartToWhatsApp();
+    return;
+  }
+
+  // cart item interactions delegated:
+  if(e.target.classList.contains('edit-minus') || e.target.classList.contains('edit-plus') || e.target.classList.contains('btn-delete') || e.target.classList.contains('btn-send-item') || e.target.classList.contains('btn-edit')){
+    const idx = parseInt(e.target.dataset.idx);
+    if(e.target.classList.contains('edit-minus')){
+      if(cart[idx].qty > 1) cart[idx].qty--; cart[idx].time = currentTime(); saveState(); renderCart(); showToast('Cantidad actualizada', 'ok');
+    } else if(e.target.classList.contains('edit-plus')){
+      if(cart[idx].qty < MAX_QTY) cart[idx].qty++; cart[idx].time = currentTime(); saveState(); renderCart(); showToast('Cantidad actualizada', 'ok');
+    } else if(e.target.classList.contains('btn-delete')){
+      cart.splice(idx,1); saveState(); renderCart(); showToast('Eliminado', 'danger');
+    } else if(e.target.classList.contains('btn-send-item')){
+      sendSingleItemToWhatsApp(idx);
+    } else if(e.target.classList.contains('btn-edit')){
+      // focus corresponding input
+      const input = `cartItemsBox.querySelector(input.cart-qty-input[data-idx="${idx}"])`;
+      if(input){
+        const v = parseInt(input.value) || 1;
+        if(v < 1) input.value = 1;
+        if(v > MAX_QTY) input.value = MAX_QTY;
+        cart[idx].qty = parseInt(input.value);
+        cart[idx].time = currentTime();
+        saveState(); renderCart(); showToast('Edición guardada', 'ok');
+      }
+    }
+    return;
+  }
+});
+
+/* ====== addToCart core ====== */
+function addToCart(name, price, qty, productRowNode=null){
+  // if same item exists, increase quantity
+  const existIdx = cart.findIndex(c => c.name === name && c.price === price);
+  const date = currentDate();
+  const time = currentTime();
+  if(existIdx > -1){
+    cart[existIdx].qty = Math.min(MAX_QTY, cart[existIdx].qty + qty);
+    cart[existIdx].time = time;
+    cart[existIdx].date = date;
+  } else {
+    cart.push({ name, price, qty, time, date });
+  }
+  saveState();
+  renderCart();
+  soundAdd.currentTime = 0; soundAdd.play();
+  showToast('Agregado al carrito ✔', 'ok');
+
+  // flash product on menu
+  if(productRowNode){
+    productRowNode.classList.add('flash');
+    setTimeout(()=> productRowNode.classList.remove('flash'), 900);
+  }
+}
+
+/* ====== empty cart ====== */
+function emptyCart(){
+  if(cart.length === 0){ showToast('El carrito ya está vacío', 'ok'); return; }
+  if(!confirm('¿Eliminar todo el carrito?')) return;
+  cart = [];
+  saveState();
+  renderCart();
+  showToast('Carrito vaciado', 'danger');
+}
+
+/* ====== helper date/time ====== */
+function currentDate(){
+  const d = new Date();
+  return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+}
+function currentTime(){
+  const d = new Date();
+  return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+}
+
+/* ====== export full cart to WhatsApp ====== */
+function exportCartToWhatsApp(){
+  const name = (nombreInput.value || '').trim();
+  if(!name){ alert('Por favor escribe tu nombre antes de enviar el pedido.'); nombreInput.focus(); return; }
+  if(cart.length === 0){ showToast('El carrito está vacío','danger'); return; }
+
+  // build message
+  let message = `📦 *Pedido* - ${name}\n\n`;
+  let total = 0;
+  cart.forEach((it, i) => {
+    message += `${i+1}) ${it.name}\n   Cantidad: ${it.qty}  •  Precio unit: RD$ ${it.price}\n   Subtotal: RD$ ${it.qty * it.price}\n   Agregado: ${it.date} ${it.time}\n\n`;
+    total += it.qty * it.price;
+  });
+  message += `💳 *Total:* RD$ ${total}\n\n📍 Enviar pedido ✔`;
+
+  // copy to clipboard automatically
+  copyTextToClipboard(message);
+  // also save to history
+  pedidosHist.push({ nombre: name, total, fecha: currentDate(), hora: currentTime(), items: cart });
+  saveState();
+  renderPedidosHist();
+
+  // open WhatsApp web / app
+  const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  soundSend.currentTime = 0; soundSend.play();
+  showToast('Pedido listo. Copiado al portapapeles y abriendo WhatsApp...', 'ok');
+  // open in new tab (mobile will open app)
+  window.open(waUrl, '_blank');
+
+  // small highlight then clear cart after a short delay (optional)
+  setTimeout(()=> {
+    // keep cart for records, but optionally clear
+    // cart = []; saveState(); renderCart();
+  }, 900);
+}
+
+/* ====== send single item ====== */
+function sendSingleItemToWhatsApp(idx){
+  const name = (nombreInput.value || '').trim();
+  if(!name){ alert('Escribe tu nombre antes de enviar.'); nombreInput.focus(); return; }
+  const it = cart[idx];
+  const message = `📦 Pedido (item)\nCliente: ${name}\nProducto: ${it.name}\nCantidad: ${it.qty}\nPrecio unit: RD$ ${it.price}\nSubtotal: RD$ ${it.qty * it.price}\nAgregado: ${it.date} ${it.time}\n\n✔ Enviar`;
+  copyTextToClipboard(message);
+  const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  soundSend.currentTime = 0; soundSend.play();
+  showToast('Item copiado y abriendo WhatsApp...', 'ok');
+  window.open(waUrl, '_blank');
+}
+
+/* ====== copy to clipboard ====== */
+function copyTextToClipboard(text){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).catch(()=> {
+      // fallback
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.style.position='fixed'; ta.style.left='-9999px';
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); }catch(e){}
+      ta.remove();
+    });
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position='fixed'; ta.style.left='-9999px';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); }catch(e){}
+    ta.remove();
+  }
+}
+
+/* ====== toggle cart panel ====== */
+function toggleCart(){
+  const open = cartPanel.classList.toggle('open');
+  cartPanel.setAttribute('aria-hidden', String(!open));
+  if(open){ renderCart(); } // ensure fresh
+}
+function closeCart(){ cartPanel.classList.remove('open'); cartPanel.setAttribute('aria-hidden','true'); }
+
+/* ====== keyboard and input protections ====== */
+document.addEventListener('input', function(e){
+  if(e.target.matches('input[type="number"]')){
+    let v = parseInt(e.target.value) || 1;
+    if(v < 1) v = 1;
+    if(v > MAX_QTY) v = MAX_QTY;
+    e.target.value = v;
+  }
+});
+
+/* ====== click handlers for float button and close ====== */
+cartToggle.addEventListener('click', toggleCart);
+closeCartBtn.addEventListener('click', closeCart);
+
+/* ====== initial load ====== */
+(function init(){
+  // load name if stored
+  const savedName = localStorage.getItem('cliente_nombre_v2');
+  if(savedName){ nombreInput.value = savedName; }
+
+  // restore
+  renderCart();
+  updateCounters();
+  renderPedidosHist();
+})();
+
+/* save name when changed */
+nombreInput.addEventListener('change', function(){
+  localStorage.setItem('cliente_nombre_v2', nombreInput.value.trim());
+});
+
+/* allow editing qty directly in cart inputs */
+document.addEventListener('change', function(e){
+  if(e.target.classList && e.target.classList.contains('cart-qty-input')){
+    const idx = parseInt(e.target.dataset.idx);
+    let v = parseInt(e.target.value) || 1;
+    if(v < 1) v = 1;
+    if(v > MAX_QTY) v = MAX_QTY;
+    e.target.value = v;
+    cart[idx].qty = v;
+    cart[idx].time = currentTime();
+    saveState(); renderCart();
+    showToast('Cantidad editada', 'ok');
+  }
+});
+
+/* small accessibility: Esc to close cart */
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape'){ closeCart(); }
+});
+
+/* helper: when clicking outside of cart close it (for desktop) */
+document.addEventListener('click', function(e){
+  if(!cartPanel.classList.contains('open')) return;
+  const withinCart = e.target.closest('.cart-panel');
+  const clickedToggle = e.target.closest('.cart-toggle');
+  if(!withinCart && !clickedToggle){
+    // do nothing if click inside cart or on toggle
+    if(window.innerWidth > 820) closeCart();
+  }
+});
+
+/* ====== finally: add event to all existing add buttons for keyboard safety ====== */
+// (already handled via delegation) - no extra code needed
+
+/* ====== expose some functions globally for debug if needed ====== */
+window.addToCart = addToCart;
+window.exportCartToWhatsApp = exportCartToWhatsApp;
+window.emptyCart = emptyCart;
+window.toggleCart = toggleCart;
+window.renderCart = renderCart;
+</script>
+<script>
+  
+// ========================
+// CARRITO — FUNCIONALIDAD
+// ========================
+let carrito = [];
+
+// Guardar en localStorage
+function guardarCarrito() {
+  localStorage.setItem("carritoCafeteria", JSON.stringify(carrito));
+}
+
+// Cargar carrito
+function cargarCarrito() {
+  const data = localStorage.getItem("carritoCafeteria");
+  carrito = data ? JSON.parse(data) : [];
+  actualizarBadge();
+  renderCarrito();
+}
+cargarCarrito();
+
+// Toast
+function toast(msg){
+  const t=document.createElement("div");
+  t.className="toast show";
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>{ t.classList.remove("show"); t.remove(); },1400);
+}
+
+// Actualizar contador badge
+function actualizarBadge(){
+  let total = carrito.reduce((sum, p)=> sum + p.cantidad, 0);
+  document.getElementById("contadorBadge").textContent = total;
+}
+
+// Agregar producto
+document.querySelectorAll(".btnAgregar").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    const nombre = btn.dataset.nombre;
+    const precio = parseInt(btn.dataset.precio);
+
+    const cantidad = parseInt(
+      btn.parentElement.querySelector("input").value
+    );
+
+    // Buscar si ya existe
+    let item = carrito.find(p => p.nombre === nombre);
+
+    if(item){
+      item.cantidad += cantidad;
+    } else {
+      carrito.push({ nombre, precio, cantidad });
+    }
+
+    toast("Producto agregado");
+    actualizarBadge();
+    guardarCarrito();
+    renderCarrito();
+  });
+});
+
+
+
+// Abrir / cerrar carrito
+const panel = document.querySelector(".cart-panel");
+document.querySelector(".cart-toggle").onclick = ()=>{
+  panel.classList.toggle("open");
+};
+
+// Render carrito
+function renderCarrito(){
+  const container = document.getElementById("cartItems");
+  if(!container) return;
+
+  container.innerHTML = "";
+
+  carrito.forEach((p, index)=>{
+    const div = document.createElement("div");
+    div.className="cart-item";
+    div.innerHTML = `
+      <div class="left">
+        <div class="title">${p.nombre}</div>
+        <div class="meta">$${p.precio} x ${p.cantidad}</div>
+      </div>
+      <div>
+        <button class="icon-btn" data-i="${index}" data-op="menos">−</button>
+        <button class="icon-btn" data-i="${index}" data-op="mas">+</button>
+        <button class="icon-btn" data-i="${index}" data-op="del">🗑</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+
+  // Eventos
+  container.querySelectorAll(".icon-btn").forEach(btn=>{
+    const i = btn.dataset.i;
+    const op = btn.dataset.op;
+
+    btn.onclick = ()=>{
+      if(op === "mas"){
+        carrito[i].cantidad++;
+      }
+      if(op === "menos"){
+        carrito[i].cantidad = Math.max(1, carrito[i].cantidad - 1);
+      }
+      if(op === "del"){
+        carrito.splice(i, 1);
+      }
+      guardarCarrito();
+      actualizarBadge();
+      renderCarrito();
+    };
+  });
+}
+
+// Vaciar todo
+document.getElementById("btnVaciar").onclick = ()=>{
+  carrito = [];
+  guardarCarrito();
+  actualizarBadge();
+  renderCarrito();
+};
+
+// Enviar por WhatsApp
+document.getElementById("btnEnviar").onclick = ()=>{
+  if(carrito.length === 0){
+    toast("Carrito vacío");
+    return;
+  }
+
+  const nombre = `document.getElementById("nombreCliente").value || "Cliente"`;
+
+  let texto = `Pedido de ${nombre}:\n\n`;
+  carrito.forEach(p=>{
+    texto += `• ${p.nombre} x${p.cantidad} — $${p.precio * p.cantidad}\n`;
+  });
+
+  const total = carrito.reduce((sum,p)=> sum + p.precio*p.cantidad, 0);
+  texto += `\nTotal: $${total}`;
+
+  const url = `"https://wa.me/1XXXXXXXXXX?text=" + encodeURIComponent(texto)`;
+  window.open(url, "_blank");
+};
+
+
+
+enterBtn.addEventListener('click', () => {
+  // Agregar animación de salida si quieres
+  welcomeScreen.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+  welcomeScreen.style.opacity = '0';
+  welcomeScreen.style.transform = 'translateY(-20px)';
+
+  // Esperar un momento para que la animación se vea antes de ocultar
+  setTimeout(() => {
+    welcomeScreen.style.display = 'none';
+  }, 500);
+}); 
+
+
+
+const welcomeScreen = document.getElementById('welcomeScreen');
+  const enterBtn = document.getElementById('enterBtn');
+
+  enterBtn.addEventListener('click', () => {
+    // Desactiva cualquier animación anterior
+    welcomeScreen.style.animation = "none";
+
+    // Aplica la transición de desvanecimiento y pequeño zoom
+    welcomeScreen.style.opacity = "0";
+    welcomeScreen.style.transform = "scale(1.05)";
+
+    // Oculta completamente después de la transición
+    setTimeout(() => {
+      welcomeScreen.style.display = "none";
+    }, 500); // coincide con la duración de la transición
+  });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const welcomeScreen = document.getElementById('welcomeScreen');
+      const enterBtn = document.getElementById('enterBtn');
+      const menu = document.getElementById('menu');
+
+      enterBtn.addEventListener('click', () => {
+        welcomeScreen.style.opacity = "0";
+        welcomeScreen.style.transform = "scale(1.05)";
+        setTimeout(() => {
+          welcomeScreen.style.display = "none";
+          menu.style.display = "block"; // Muestra tu menú
+        }, 500);
+      });
+    });
+
+    let priceInput = box.querySelector('select.selectPrecio') || box.querySelector('input[type=number]');
+const price = parseFloat(priceInput.value);
+  
+  
+  
+  </script>
+
 
 </body>
 </html>
