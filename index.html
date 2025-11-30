@@ -11,23 +11,65 @@
      ========================= -->
 <style>
 
-/* Estilo inicial de la pantalla de bienvenida */
-  #welcomeScreen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    opacity: 1;
-    transform: scale(1);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-  }
+/* Pantalla completa de bienvenida */
+#welcomeScreen {
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background: linear-gradient(135deg, #f7d794, #f1c40f);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.welcome-content {
+  text-align: center;
+  color: #333;
+  animation: fadeInScale 0.6s ease;
+}
+
+.logo {
+  width: 200px; /* Ajusta el tamaño */
+  margin-bottom: 20px;
+  filter: brightness(1.1) saturate(1.2);
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+p {
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+}
+
+#enterBtn {
+  padding: 10px 25px;
+  font-size: 1rem;
+  background-color: #f39c12;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#enterBtn:hover {
+  background-color: #e67e22;
+}
+
+@keyframes fadeInScale {
+  0% { opacity:0; transform: scale(0.95); }
+  100% { opacity:1; transform: scale(1); }
+}
 
 :root{
   --bg:#0f1724;
@@ -236,14 +278,57 @@ input[type=number]::-webkit-inner-spin-button {
 input[type=number] {
   appearance: textfield; /* versión moderna sin advertencias */
 }
+
+
+.subcategoria h3 {
+  background: linear-gradient(90deg, #ff7f50, #ffcc00); /* degradado de izquierda a derecha */
+  color: #fff;                                         /* texto blanco */
+  padding: 8px 16px;                                   /* espacio interno */
+  border-radius: 10px;                                  /* esquinas redondeadas */
+  font-weight: bold;                                    /* texto en negrita */
+  margin-bottom: 12px;                                  /* separación con los productos */
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);            /* sombra ligera al texto */
+  transition: transform 0.2s, box-shadow 0.2s;         /* transición suave al hover */
+  display: inline-block;                                /* ajusta tamaño al texto */
+}
+
+/* Efecto al pasar el mouse */
+.subcategoria h3:hover {
+  transform: translateY(-2px);                         /* levanta ligeramente */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);             /* sombra más pronunciada */
+  cursor: pointer;                                     /* indica que es interactivo */
+}
+.category h2 {
+  background: linear-gradient(90deg, #ff6f61, #4a47ff); /* degradado similar al subcategoría */
+  color: #fff;                                         /* texto blanco */
+  padding: 12px 24px;                                  /* más grande que el subcategoría */
+  border-radius: 12px;                                  /* esquinas redondeadas */
+  font-weight: 900;                                     /* más negrita que subcategoría */
+  font-size: 1.8rem;                                   /* tamaño más grande */
+  margin-bottom: 20px;                                  /* separación con productos */
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);            /* sombra ligera */
+  display: inline-block;                                /* ajusta tamaño al texto */
+  transition: transform 0.3s, box-shadow 0.3s;         /* transición suave al hover */
+}
+
+/* Efecto al pasar el mouse */
+.category h2:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+  cursor: default; /* no parece botón, solo efecto visual */
+}
+
 </style>
 </head>
 <body>
 
-<!-- Pantalla de bienvenida -->
 <div id="welcomeScreen">
-  <img src="pngminimarket.jpg" alt="Logo">
-  <button id="enterBtn">Entrar al Menú</button>
+  <div class="welcome-content">
+    <img src="pngminimarket.jpg" alt="Logo" class="logo">
+    <h1>¡Bienvenid@s!</h1>
+    <p>Disfruta de nuestros productos y realiza tu pedido fácilmente.</p>
+    <button id="enterBtn">Entrar</button>
+  </div>
 </div>
 <!-- =========================
      HTML (INTERFAZ) - Parte visible
@@ -376,23 +461,128 @@ input[type=number] {
     <section class="category">
       <h2>Frito / Tostones</h2>
       <!-- some items -->
-      <div class="producto-row"><div class="prod-info">Frito salami — $100</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Frito salami" data-precio="100"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito salami" data-precio="100">Agregar</button></div></div>
 
-      <div class="producto-row"><div class="prod-info">Frito chuleta — $150</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Frito chuleta" data-precio="150"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito chuleta" data-precio="150">Agregar</button></div></div>
+       <div class="subcategoria">
+  <h3>Frito + salami</h3>
+  <!-- Aquí van tus productos -->
 
-      <div class="producto-row"><div class="prod-info">Frito longaniza — $100</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Frito longaniza" data-precio="100"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito longaniza" data-precio="100">Agregar</button></div></div>
+      <div class="producto-row"><div class="prod-info">Frito +salami — $100</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Frito salami" data-precio="100"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito salami" data-precio="100">Agregar</button></div></div>
+<div class="producto-row"><div class="prod-info">Frito + salami — $150</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="150" data-nombre="Frito salami" data-precio="150"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito salami" data-precio="150">Agregar</button></div></div>
+<div class="producto-row"><div class="prod-info">Frito + salami — $200</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="200" data-nombre="Frito salami" data-precio="200"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito salami" data-precio="200">Agregar</button></div></div>
+<div class="producto-row"><div class="prod-info">Frito + salami — $250</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="250" data-nombre="Frito salami" data-precio="250"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito salami" data-precio="250">Agregar</button></div></div>
+</div>
+
+<div class="subcategoria">
+  <h3>Frito + chuleta</h3>
+  <!-- Aquí van tus productos -->
+
+<div class="producto-row"><div class="prod-info">Frito + chuleta — $150</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="150" data-nombre="Frito chuleta" data-precio="150"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito chuleta" data-precio="150">Agregar</button></div></div>
+ <div class="producto-row"><div class="prod-info">Frito + chuleta — $200</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="200" data-nombre="Frito chuleta" data-precio="200"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito chuleta" data-precio="200">Agregar</button></div></div>
+ <div class="producto-row"><div class="prod-info">Frito + chuleta — $250</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="250" data-nombre="Frito chuleta" data-precio="250"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito chuleta" data-precio="250">Agregar</button></div></div>
+ <div class="producto-row"><div class="prod-info">Frito + chuleta — $300</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="300" data-nombre="Frito chuleta" data-precio="300"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito chuleta" data-precio="300">Agregar</button></div></div>
+ </div>
+
+ <div class="subcategoria">
+  <h3>Frito + longaniza </h3>
+  <!-- Aquí van tus productos -->
+<div class="producto-row"><div class="prod-info">Frito + longaniza — $100</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Frito longaniza" data-precio="100"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito longaniza" data-precio="100">Agregar</button></div></div>
+<div class="producto-row"><div class="prod-info">Frito + longaniza — $150</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="150" data-nombre="Frito longaniza" data-precio="150"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito longaniza" data-precio="150">Agregar</button></div></div>
+<div class="producto-row"><div class="prod-info">Frito + longaniza — $200</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="200" data-nombre="Frito longaniza" data-precio="200"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito longaniza" data-precio="200">Agregar</button></div></div>
+<div class="producto-row"><div class="prod-info">Frito + longaniza — $250</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="250" data-nombre="Frito longaniza" data-precio="250"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito longaniza" data-precio="250">Agregar</button></div></div>
+</div>
+
+<div class="subcategoria">
+  <h3>Frito + salchicha</h3>
+  <!-- Aquí van tus productos -->
+   <div class="producto-row"><div class="prod-info">Frito + salchicha — $100</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Frito salchicha" data-precio="100"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito salchicha" data-precio="100">Agregar</button></div></div>
+   <div class="producto-row"><div class="prod-info">Frito + salchicha — $150</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="200" data-nombre="Frito salchicha" data-precio="150"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito salchicha" data-precio="150">Agregar</button></div></div>
+   <div class="producto-row"><div class="prod-info">Frito + salchicha — $200</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Frito salchicha" data-precio="200"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito salchicha" data-precio="200">Agregar</button></div></div>
+   <div class="producto-row"><div class="prod-info">Frito + salchicha — $250</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Frito salchicha" data-precio="250"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito salchicha" data-precio="250">Agregar</button></div></div>
+ </div>
+
+
+   <div class="subcategoria">
+  <h3>Frito + huevo</h3>
+  <!-- Aquí van tus productos -->
+<div class="producto-row"><div class="prod-info">Frito + huevo — $100</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Frito huevo" data-precio="100"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito huevo" data-precio="100">Agregar</button></div></div>
+<div class="producto-row"><div class="prod-info">Frito + huevo — $150</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Frito huevo" data-precio="150"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito huevo" data-precio="150">Agregar</button></div></div>
+<div class="producto-row"><div class="prod-info">Frito + huevo — $200</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Frito huevo" data-precio="200"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito huevo" data-precio="200">Agregar</button></div></div>
+</div>
+
+
+<div class="subcategoria">
+  <h3>Frito  + queso</h3>
+  <!-- Aquí van tus productos -->
+    <div class="producto-row"><div class="prod-info">Frito  + queso — $100</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Frito queso" data-precio="100"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito queso" data-precio="100">Agregar</button></div></div>
+    <div class="producto-row"><div class="prod-info">Frito  + queso — $150</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Frito queso" data-precio="150"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito queso" data-precio="150">Agregar</button></div></div>
+    <div class="producto-row"><div class="prod-info">Frito  + queso — $200</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Frito queso" data-precio="200"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Frito queso" data-precio="200">Agregar</button></div></div>
+    </div>
+
     </section>
 
-    <section class="category">
-      <h2>Papas fritas</h2>
-      <div class="producto-row"><div class="prod-info">Salchipapa — $100</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Salchipapa" data-precio="100"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Salchipapa" data-precio="100">Agregar</button></div></div>
+<section class="category">
+  <h2>Papas fritas</h2>
 
-      <div class="producto-row"><div class="prod-info">Yaroa — $200</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Yaroa" data-precio="200"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Yaroa" data-precio="200">Agregar</button></div></div>
+  
+<div class="subcategoria">
+  <h3>Papa con chuleta</h3>
+<div class="producto-row"><div class="prod-info">Papa con chuleta — $150</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Papa con chuleta" data-precio="150"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Papa con chuleta" data-precio="150">Agregar</button></div></div>
+<div class="producto-row"><div class="prod-info">Papa con chuleta — $200</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Papa con chuleta" data-precio="200"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Papa con chuleta" data-precio="200">Agregar</button></div></div>
+<div class="producto-row"><div class="prod-info">Papa con chuleta — $250</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Papa con chuleta" data-precio="250"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Papa con chuleta" data-precio="250">Agregar</button></div></div>
+</div>
+
+
+<div class="subcategoria">
+  <h3>Papa con salchicha y pollo </h3>
+  <div class="producto-row"><div class="prod-info">Papa con salchicha y pollo — $150</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Papa con salchicha y pollo" data-precio="150"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Papa con salchicha y pollo" data-precio="150">Agregar</button></div></div>
+ <div class="producto-row"><div class="prod-info">Papa con salchicha y pollo — $200</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Papa con salchicha y pollo" data-precio="200"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Papa con salchicha y pollo" data-precio="200">Agregar</button></div></div>
+ <div class="producto-row"><div class="prod-info">Papa con salchicha y pollo — $250</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Papa con salchicha y pollo" data-precio="250"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Papa con salchicha y pollo" data-precio="250">Agregar</button></div></div>
+ </div>
+
+ 
+<div class="subcategoria">
+  <h3>Yaroha</h3>
+<div class="producto-row"><div class="prod-info">Yaroha — $200</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Yaroha" data-precio="200"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Yaroha" data-precio="200">Agregar</button></div></div>
+<div class="producto-row"><div class="prod-info">Yaroha — $250</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Yaroha" data-precio="250"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Yaroha" data-precio="250">Agregar</button></div></div>
+<div class="producto-row"><div class="prod-info">Yaroha — $300</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Yaroha" data-precio="300"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Yaroha" data-precio="300">Agregar</button></div></div>
+</div>
+
+
+<div class="subcategoria">
+  <h3>Salchipapa</h3>
+<div class="producto-row"><div class="prod-info">Salchipapa — $100</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Salchipapa" data-precio="100"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Salchipapa" data-precio="100">Agregar</button></div></div>
+<div class="producto-row"><div class="prod-info">Salchipapa — $150</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Salchipapa" data-precio="150"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Salchipapa" data-precio="150">Agregar</button></div></div>
+<div class="producto-row"><div class="prod-info">Salchipapa — $200</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Salchipapa" data-precio="200"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Salchipapa" data-precio="200">Agregar</button></div></div>
+<div class="producto-row"><div class="prod-info">Salchipapa — $250</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Salchipapa" data-precio="250"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Salchipapa" data-precio="250">Agregar</button></div></div>
+</div>
+
+</section>
+
+
+
+<section class="category">
+      <h2>Otros</h2>
+      <div class="producto-row"><div class="prod-info">Bolita de yuca — $50</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Bolita de yuca" data-precio="50"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Bolita de yuca" data-precio="50">Agregar</button></div></div>
+
+      <div class="producto-row"><div class="prod-info">Quipe — $50</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre=" Quipe" data-precio="50"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Quipe" data-precio="50">Agregar</button></div></div>
+
+     <div class="producto-row"><div class="prod-info">Empada — $50</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Empada" data-precio="50"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Empada" data-precio="50">Agregar</button></div></div>
+      
     </section>
+
+
 
     <section class="category">
       <h2>Batidas</h2>
       <div class="producto-row"><div class="prod-info">Batida de fresa — $125</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Batida de fresa" data-precio="125"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Batida de fresa" data-precio="125">Agregar</button></div></div>
+
+      <div class="producto-row"><div class="prod-info">Batida de zapote — $125</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Batida de zapote" data-precio="125"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Batida de zapote" data-precio="125">Agregar</button></div></div>
+
+     <div class="producto-row"><div class="prod-info">Batida de lechosa — $125</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Batida de lechosa" data-precio="125"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Batida de lechosa" data-precio="125">Agregar</button></div></div>
+      
+      <div class="producto-row"><div class="prod-info">Batida de mango — $125</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Batida de mango" data-precio="125"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Batida de mango" data-precio="125">Agregar</button></div></div>
+
+      <div class="producto-row"><div class="prod-info">Batida de guineo — $125</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Batida de guineo" data-precio="125"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Batida de guineo" data-precio="125">Agregar</button></div></div>
 
       <div class="producto-row"><div class="prod-info">Batida de granadillo — $150</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Batida de granadillo" data-precio="150"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Batida de granadillo" data-precio="150">Agregar</button></div></div>
     </section>
@@ -401,9 +591,22 @@ input[type=number] {
       <h2>Jugos naturales</h2>
       <div class="producto-row"><div class="prod-info">Jugo de chinola — $50</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Jugo de chinola" data-precio="50"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Jugo de chinola" data-precio="50">Agregar</button></div></div>
 
-      <div class="producto-row"><div class="prod-info">Jugo de naranja + avena — $50</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Jugo de naranja + avena" data-precio="50"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Jugo de naranja + avena" data-precio="50">Agregar</button></div></div>
+      <div class="producto-row"><div class="prod-info">Jugo de chinola + avena — $50</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Jugo de chinola + avena" data-precio="50"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Jugo de chinola + avena" data-precio="50">Agregar</button></div></div>
 
+      <div class="producto-row"><div class="prod-info">Jugo de naranja + avena — $50</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Jugo de naranja + avena" data-precio="50"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Jugo de naranja + avena" data-precio="50">Agregar</button></div></div>
+     
+      <div class="producto-row"><div class="prod-info">Jugo de limon — $50</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Jugo de limon" data-precio="50"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Jugo de limon" data-precio="50">Agregar</button></div></div>
+     
+      <div class="producto-row"><div class="prod-info">Jugo de limon + avena — $50</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Jugo de limon + avena" data-precio="50"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Jugo de limon + avena" data-precio="50">Agregar</button></div></div>
+     
+      <div class="producto-row"><div class="prod-info">Jugo de fresa — $50</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Jugo de fresa" data-precio="50"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Jugo de fresa" data-precio="50">Agregar</button></div></div>
+     
       <div class="producto-row"><div class="prod-info">Jugo de remolacha + avena — $50</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Jugo de remolacha + avena" data-precio="50"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Jugo de remolacha + avena" data-precio="50">Agregar</button></div></div>
+
+      <div class="producto-row"><div class="prod-info">Jugo de cereza — $50</div><div class="controls"><div class="cantidadBox"><button class="menos">−</button><input type="number" value="1" min="1" max="100" data-nombre="Jugo de cereza" data-precio="50"><button class="mas">+</button></div><button class="btnAgregar" data-nombre="Jugo de cereza" data-precio="50">Agregar</button></div></div>
+    
+    
+    
     </section>
   </div>
 
@@ -449,7 +652,7 @@ input[type=number] {
   <div class="cart-footer">
     <div style="display:flex; gap:8px; align-items:center;">
       <div class="small" style="color:var(--muted)">Nº WhatsApp:</div>
-      <div style="font-weight:900; color:var(--accent)">+18494397969</div>
+      <div style="font-weight:900; color:var(--accent)">+18297490858</div>
     </div>
     <div style="display:flex; gap:8px;">
       <button id="exportWhatsBtn" class="send-all">Enviar por WhatsApp</button>
@@ -846,6 +1049,8 @@ window.renderCart = renderCart;
 </script>
 <script>
   
+
+
 // ========================
 // CARRITO — FUNCIONALIDAD
 // ========================
@@ -1003,7 +1208,43 @@ enterBtn.addEventListener('click', () => {
   }, 500);
 }); 
 
+document.querySelectorAll(".btnAgregar").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    const box = btn.closest(".controls"); // Contenedor del producto
+    const nombre = btn.closest(".producto-row").querySelector(".prod-info").textContent;
 
+    // Tomar precio: primero input manual, luego select
+    const inputManual = box.querySelector("input.precio-manual")?.value;
+    const selectPrecio = box.querySelector("select.select-precio")?.value;
+
+    let precio = 0;
+    if(inputManual && !isNaN(parseFloat(inputManual))){
+      precio = parseFloat(inputManual);
+    } else if(selectPrecio && !isNaN(parseFloat(selectPrecio))){
+      precio = parseFloat(selectPrecio);
+    } else {
+      alert("Selecciona o escribe un precio válido");
+      return;
+    }
+
+    // Tomar cantidad
+    const cantidad = parseInt(box.querySelector("input.cantidad")?.value) || 1;
+
+    // Buscar si ya existe el mismo producto con mismo precio
+    let item = carrito.find(p => p.nombre === nombre && p.precio === precio);
+
+    if(item){
+      item.cantidad += cantidad;
+    } else {
+      carrito.push({ nombre, precio, cantidad });
+    }
+
+    toast("Producto agregado");
+    actualizarBadge();
+    guardarCarrito();
+    renderCarrito();
+  });
+});
 
 const welcomeScreen = document.getElementById('welcomeScreen');
   const enterBtn = document.getElementById('enterBtn');
