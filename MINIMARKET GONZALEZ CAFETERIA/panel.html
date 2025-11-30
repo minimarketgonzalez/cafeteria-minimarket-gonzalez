@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel de Pedidos</title>
+<style>
+body { font-family: Arial; background:#f0f6ff; padding:20px; color:#1a3b5f; }
+h1,h2,h3 { color:#0a3d91; }
+table { width:100%; border-collapse: collapse; margin-top:20px; }
+table, th, td { border:1px solid #0a3d91; }
+th, td { padding:8px; text-align:center; }
+#totales { margin-top:20px; font-size:18px; }
+</style>
+</head>
+<body>
+
+<h1>📋 Panel Personal de Pedidos</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Fecha</th>
+      <th>Hora</th>
+      <th>Cliente</th>
+      <th>Producto</th>
+      <th>Precio</th>
+    </tr>
+  </thead>
+  <tbody id="tablaPedidos"></tbody>
+</table>
+
+<div id="totales">
+  <p>Total del día: $<span id="totalDia">0</span></p>
+  <p>Total del mes: $<span id="totalMes">0</span></p>
+</div>
+
+<script>
+function cargarPedidos() {
+    const pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
+    const tbody = document.getElementById('tablaPedidos');
+    tbody.innerHTML = '';
+
+    let totalDia = 0, totalMes = 0;
+    const hoy = new Date();
+    const diaActual = hoy.getDate();
+    const mesActual = hoy.getMonth() + 1;
+    const anioActual = hoy.getFullYear();
+
+    pedidos.forEach(p => {
+        tbody.innerHTML += `<tr>
+            <td>${p.fecha}</td>
+            <td>${p.hora}</td>
+            <td>${p.nombre}</td>
+            <td>${p.producto}</td>
+            <td>$${p.precio}</td>
+        </tr>`;
+
+        const [d,m,a] = p.fecha.split('/').map(Number);
+        if(d===diaActual && m===mesActual && a===anioActual) totalDia += Number(p.precio);
+        if(m===mesActual && a===anioActual) totalMes += Number(p.precio);
+    });
+
+    document.getElementById('totalDia').innerText = totalDia;
+    document.getElementById('totalMes').innerText = totalMes;
+}
+
+cargarPedidos();
+</script>
+
+</body>
+</html>
